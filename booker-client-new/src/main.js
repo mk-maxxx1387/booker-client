@@ -6,8 +6,10 @@ import App from './App'
 import router from './router/router'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import NavigationBar from "./components/NavigationBar";
 
 Vue.use(BootstrapVue)
+Vue.component('NavigationBar', NavigationBar);
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -15,5 +17,8 @@ new Vue({
   el: '#app',
   router,
   template: '<App/>',
-  components: { App }
+  components: { 
+    App,
+    
+   }
 })

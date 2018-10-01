@@ -1,15 +1,15 @@
 <template>
     <div>
         <div>
-			<button @click="prewYear()"><<</button>
+			<button @click="prewYear()">&lArr;</button>
 			<span><b>{{selectedDate.year}}</b></span>
-			<button @click="nextYear()">>></button>
+			<button @click="nextYear()">&rArr;</button>
 			<br>
-			<button @click="prewMonth()"><</button>
+			<button @click="prewMonth()">&lArr;</button>
 			<span><b>{{months[selectedDate.month]}}</b></span>
-			<button @click="nextMonth()">></button>	
+			<button @click="nextMonth()">&rArr;</button>	
 		</div>
-		<table>
+		<!--<table>
 			<tr>
 				<th v-for="(day,i) in weekDays" :key="i">
 					{{day}}
@@ -30,7 +30,37 @@
 					</template>	 
 				</td>
 			</tr>
-		</table>
+		</table>-->
+		<b-container class="bv-example-row">
+			<b-row>
+				<b-col v-for="(day,i) in weekDays" :key="i">
+					{{day}}
+				</b-col>
+			</b-row>
+			<b-row v-for="(week,i) in monthArr" :key="i">
+				<b-col v-for="(day,i) in week" :key="i">
+					<template v-if="day == null">
+					</template>
+					<template v-else>
+						<template v-if="day.isAccess">
+
+							<div @click.stop="showEvents(day.day)" v-bind:class="{today: day.isToday, planned: day.isPlanned, holiday: day.isHoliday}">
+							{{ day.day }}</div>
+							<div>
+								<a href="">10:00 - 11:00</a>
+								<a href="">10:00 - 11:00</a>
+								<a href="">10:00 - 11:00</a>
+								<a href="">10:00 - 11:00</a>
+								<a href="">10:00 - 11:00</a>
+							</div>
+						</template>
+						<template v-else>
+							<div v-bind:class="{today: day.isToday, planned: day.isPlanned, holiday: day.isHoliday}">{{day.day}}</div>
+						</template>
+					</template>	 
+				</b-col>
+			</b-row>
+		</b-container>
     </div>
 </template>
 
@@ -135,9 +165,6 @@ export default {
 			this.monthArr = [];
             this.monthArr[week] = {};
             
-            console.log(day);
-            console.log(week);
-            console.log(colsTotal);
 			do{
 				let isToday = false;
 				let isPlanned = false;
@@ -232,7 +259,6 @@ export default {
 				if (this.selectedDate.month === null) {
                     
                     this.selectedDate.month = this.currMonth();
-                    console.log(this.selectedDate.month);
 				}
 			}
 
