@@ -13,6 +13,7 @@
 
 <script>
 import $ from 'jquery';
+import axios from 'axios';
 
 export default {
   name: 'Login',
@@ -24,27 +25,48 @@ export default {
   },
   methods: {
     login(){
-        $.ajax({
-            type: 'PUT',
-            url: 'http://booker/server/api/user/',
-            async: false,
-            beforeSend: function(xhr){
-                xhr.setRequestHeader ("Authorization", "Basic " + btoa(this.email + ":" + this.password));
-            },
-            success: function(data){
-                data = $.parseJSON(data);
+      axios({
+        method:'put',
+        url: 'http://192.168.0.15/~user3/booker/server/api/login/',
+        auth: {
+            username: this.email,
+            password: this.password
+        }
+      }).then(function(response) {
+        console.log('Authenticated');
+        console.log(response);
+      }).catch(function(error) {
+        console.log(error);
+      });
+    /*$.ajax({
+      type: 'PUT',
+      url: 'http://192.168.0.15/~user3/booker/server/api/login/',
+      async: false,
+      data: {
+        email: this.email,
+        password: this.password
+      },
+      success: function(data){
+        alert('200');
+        console.log(data);
+                
+        data = $.parseJSON(data);
 
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('login', data.login);
-
-                init();
-            },
-            statusCode: {
-                400: function(){
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('email', data.email);
+        localStorage.setItem('username', data.email);
+      },
+      statusCode: {
+        200: function (){
+          alert('200');
+        },
+        400: function(){
 
                 },
                 401: function(data){
-                    //let error = JSON.parse(data.responseText);
+                    let error = JSON.parse(data.responseText);
+                    console.log(error);
+                    
                     //$("#loginPassword-error").text(error);
                 },
                 403: function(data){
@@ -54,7 +76,7 @@ export default {
                     alert('404');
                 }
             }
-        });
+        });*/
     },
     logout(){
         $.ajax({
