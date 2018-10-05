@@ -13,13 +13,13 @@
             <!-- Right aligned nav items -->
                 <template>
                     <b-navbar-nav class="ml-auto">
-                        <b-nav-item-dropdown right>
-                            <template slot="button-content">
-                                <em>User</em>
+                        <template v-if="currentUser.username">
+                            <b-nav-item disabled>{{currentUser.username}}</b-nav-item>
+                            <b-button @click="logout">Logout</b-button>
+                        </template>
+                        <template v-else>
+                                <b-nav-item href="/login">Login</b-nav-item>
                             </template>
-                            <b-dropdown-item href="/profile">Profile</b-dropdown-item>
-                            <b-dropdown-item href="/signout">Signout</b-dropdown-item>
-                        </b-nav-item-dropdown>
                     </b-navbar-nav>
                 </template>
             </b-collapse>
@@ -28,9 +28,47 @@
 </template>
 
 <script>
+import Login from "@/components/Login.vue";
 import NavigationBar from "@/components/NavigationBar.vue";
+import axios from "axios";
+
 export default {
-    components: NavigationBar
+    components: NavigationBar,
+    data(){
+        return {
+            currentUser: {
+                token: null,
+                username: null,
+                email: null
+            }
+        }
+    },
+    mounted(){
+        this.currentUser.username = localStorage.getItem('username') || null;
+        console.log(Login.currentUser);
+    },
+    methods: {
+        logout(){
+            let self = this;
+            axios({
+                method:'delete',
+                url: 'http://192.168.0.15/~user3/booker/server/api/login/',
+                headers:{
+                    'Authorization' : localStorage.getItem('token')
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                localStorage.removeItem('token', response.data.token);
+                localStorage.removeItem('email', response.data.email);
+                localStorage.removeItem('username', response.data.username);
+                self.$router.push('/login');
+            }).catch(function(error) {
+                alert('error');
+                console.log(error);
+            });
+        }
+    }
 }
 </script>
 

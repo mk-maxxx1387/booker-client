@@ -7,6 +7,7 @@
       <label for="inputPassword" class="sr-only">Password</label>
       <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <strong class="text-danger">{{error}}</strong>
     </form>
   </div>
 </template>
@@ -20,11 +21,16 @@ export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      error: ''
     }
   },
   methods: {
+    test(){
+      alert('1');
+    },
     login(){
+      let self = this;
       axios({
         method:'put',
         url: 'http://192.168.0.15/~user3/booker/server/api/login/',
@@ -33,65 +39,18 @@ export default {
             password: this.password
         }
       }).then(function(response) {
-        console.log('Authenticated');
         console.log(response);
+
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('email', response.data.email);
+        localStorage.setItem('username', response.data.username);
+        self.$router.push('/');
+
       }).catch(function(error) {
-        console.log(error);
+        if(error.response){
+          self.error = error.response.data;
+        }
       });
-    /*$.ajax({
-      type: 'PUT',
-      url: 'http://192.168.0.15/~user3/booker/server/api/login/',
-      async: false,
-      data: {
-        email: this.email,
-        password: this.password
-      },
-      success: function(data){
-        alert('200');
-        console.log(data);
-                
-        data = $.parseJSON(data);
-
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('email', data.email);
-        localStorage.setItem('username', data.email);
-      },
-      statusCode: {
-        200: function (){
-          alert('200');
-        },
-        400: function(){
-
-                },
-                401: function(data){
-                    let error = JSON.parse(data.responseText);
-                    console.log(error);
-                    
-                    //$("#loginPassword-error").text(error);
-                },
-                403: function(data){
-
-                },
-                404: function(){
-                    alert('404');
-                }
-            }
-        });*/
-    },
-    logout(){
-        $.ajax({
-            type: 'DELETE',
-            url: 'api/user/',
-            async: false,
-            beforeSend: function(xhr){
-                xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
-            },
-            success: function(){
-                localStorage.removeItem("token");
-                localStorage.removeItem("login");
-                init();
-            }
-        });
     }
   }
 }
